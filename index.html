@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROMPTEUR PRO</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@400;700&family=Space+Grotesk:wght@300;400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #18181f;
+    --border: rgba(255,255,255,0.07);
+    --border-bright: rgba(255,255,255,0.15);
+    --accent: #e8ff5a;
+    --accent2: #5affd6;
+    --text: #f0f0f0;
+    --muted: #666;
+    --danger: #ff5a5a;
+    --radius: 12px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: relative;
+    z-index: 10;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+  }
+  .logo span { color: var(--text); opacity: 0.4; }
+  .header-btns { display: flex; gap: 0.75rem; align-items: center; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 1.1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-bright);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .btn:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.3); }
+  .btn.primary { background: var(--accent); color: #0a0a0f; border-color: var(--accent); font-weight: 700; }
+  .btn.primary:hover { background: #f5ff8a; }
+  .btn.danger { border-color: var(--danger); color: var(--danger); }
+  .btn.danger:hover { background: rgba(255,90,90,0.1); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* ── LAYOUT ── */
+  .workspace {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .section-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+  .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+  .control-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+  .control-label { font-size: 0.82rem; color: rgba(255,255,255,0.55); }
+  .control-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    min-width: 48px;
+    text-align: right;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(232,255,90,0.15);
+    transition: box-shadow 0.2s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 0 6px rgba(232,255,90,0.2);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+  }
+
+  select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2rem;
+  }
+  select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(232,255,90,0.1); }
+
+  .divider { height: 1px; background: var(--border); }
+
+  /* Color swatches */
+  .color-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .color-swatch {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .color-swatch:hover { transform: scale(1.1); }
+  .color-swatch.active { border-color: white; }
+
+  /* Mirror mode toggle */
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; }
+  .toggle {
+    position: relative;
+    width: 38px; height: 20px;
+    cursor: pointer;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute; inset: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: 20px;
+    transition: background 0.2s;
+  }
+  .toggle input:checked + .toggle-track { background: var(--accent); border-color: var(--accent); }
+  .toggle-thumb {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 14px; height: 14px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    pointer-events: none;
+  }
+  .toggle input:checked ~ .toggle-thumb { transform: translateX(18px); }
+
+  /* Text area */
+  textarea {
+    width: 100%;
+    min-height: 140px;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    resize: vertical;
+    outline: none;
+    line-height: 1.6;
+  }
+  textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(232,255,90,0.08); }
+  textarea::placeholder { color: var(--muted); }
+
+  /* ── FULLSCREEN MODE ── */
+  :fullscreen #prompter-canvas,
+  :-webkit-full-screen #prompter-canvas {
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+  :fullscreen #text-track,
+  :-webkit-full-screen #text-track {
+    font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif !important;
+    font-weight: 900 !important;
+    font-size: 96px !important;
+    padding: 20vh 6vw !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.01em !important;
+  }
+  :fullscreen .status-bar,
+  :-webkit-full-screen .status-bar { display: none !important; }
+  :fullscreen header,
+  :-webkit-full-screen header { display: none !important; }
+  :fullscreen .sidebar,
+  :-webkit-full-screen .sidebar { display: none !important; }
+  :fullscreen .workspace,
+  :-webkit-full-screen .workspace { grid-template-columns: 1fr !important; }
+  :fullscreen .display-area,
+  :-webkit-full-screen .display-area { height: 100vh !important; }
+
+  /* HUD flottant en plein écran */
+  #fs-hud {
+    display: none;
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  :fullscreen #fs-hud,
+  :-webkit-full-screen #fs-hud { display: flex !important; }
+  .fs-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.45rem 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.7);
+    color: rgba(255,255,255,0.8);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s;
+  }
+  .fs-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); }
+  .fs-btn.fs-exit { color: var(--danger); border-color: rgba(255,90,90,0.4); }
+  .fs-btn.fs-exit:hover { background: rgba(255,90,90,0.15); }
+  .fs-speed-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.4);
+    padding: 0 0.5rem;
+  }
+
+  /* ── MAIN DISPLAY ── */
+  .display-area {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* TIMER OVERLAY */
+  #timer-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: opacity 0.5s;
+  }
+  #timer-overlay.hidden { opacity: 0; pointer-events: none; }
+  .timer-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+  .timer-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 10rem;
+    line-height: 1;
+    color: var(--accent);
+    text-shadow: 0 0 60px rgba(232,255,90,0.3);
+    transition: all 0.15s;
+  }
+  .timer-count.pulse { transform: scale(1.05); }
+  .timer-bar-wrap { width: 200px; height: 3px; background: var(--surface2); border-radius: 2px; margin-top: 2rem; }
+  .timer-bar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 1s linear; }
+
+  /* PROMPTER CANVAS */
+  #prompter-canvas {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background: var(--bg);
+  }
+  #text-track {
+    position: absolute;
+    width: 100%;
+    padding: 20vh 8vw;
+    will-change: transform;
+    line-height: 1.6;
+    transition: filter 0.3s;
+  }
+  #text-track.mirrored { transform: scaleX(-1); }
+  #text-track p {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  #text-track p .word { display: inline; }
+  #text-track p .word.highlight { color: var(--accent); font-weight: 700; }
+
+  /* Focus gradient */
+  #prompter-canvas::before,
+  #prompter-canvas::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 25%;
+    z-index: 5;
+    pointer-events: none;
+  }
+  #prompter-canvas::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--bg), transparent);
+  }
+  #prompter-canvas::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg), transparent);
+  }
+
+  /* Focus line */
+  .focus-line {
+    position: absolute;
+    top: 50%;
+    left: 5vw; right: 5vw;
+    height: 2px;
+    background: rgba(232,255,90,0.15);
+    transform: translateY(-50%);
+    z-index: 4;
+    border-radius: 1px;
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1.5rem;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .status-item { display: flex; align-items: center; gap: 0.5rem; }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .status-dot.active { background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: pulse-dot 1.5s infinite; }
+  @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+  .progress-wrap { width: 120px; height: 3px; background: var(--surface2); border-radius: 2px; }
+  .progress-fill { height: 100%; background: var(--accent2); border-radius: 2px; transition: width 0.3s; }
+
+  /* KEYBOARD SHORTCUTS HINT */
+  .kbd-hint {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .kbd-item { display: flex; align-items: center; gap: 0.3rem; }
+  kbd {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    padding: 2rem;
+    pointer-events: none;
+  }
+  .empty-icon {
+    font-size: 3rem;
+    opacity: 0.2;
+  }
+  .empty-state h2 { font-family: 'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:0.1em; opacity:0.25; color:var(--text); }
+  .empty-state p { font-size:0.8rem; opacity:0.4; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">PROMPTEUR <span>PRO</span></div>
+  <div class="header-btns">
+    <button class="btn" id="btn-fullscreen">⛶ Plein écran</button>
+    <button class="btn danger" id="btn-stop" disabled>■ Stop</button>
+    <button class="btn primary" id="btn-start">▶ Lancer</button>
+  </div>
+</header>
+
+<div class="workspace">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Texte -->
+    <div>
+      <div class="section-title">Texte du script</div>
+      <textarea id="script-input" placeholder="Collez votre texte ici…&#10;&#10;Le prompteur défilera automatiquement dès le lancement."></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Timer -->
+    <div>
+      <div class="section-title">Délai avant départ</div>
+      <div class="control-group">
+        <div class="control-row">
+          <span class="control-label">Secondes</span>
+          <span class="control-value" id="val-timer">5s</span>
+        </div>
+        <input type="range" id="slider-timer" min="0" max="30" step="1" value="5">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Vitesse -->
+    <div>
+      <div class="section-title">Vitesse de défilement</div>
+      <div class="control-group">
+        <div class="control-row">
+          <span class="control-label">Pixels / sec</span>
+          <span class="control-value" id="val-speed">80</span>
+        </div>
+        <input type="range" id="slider-speed" min="10" max="400" step="5" value="80">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Typographie -->
+    <div>
+      <div class="section-title">Typographie</div>
+      <div class="control-group">
+        <div class="control-row">
+          <span class="control-label">Taille</span>
+          <span class="control-value" id="val-size">52px</span>
+        </div>
+        <input type="range" id="slider-size" min="18" max="120" step="2" value="52">
+      </div>
+      <div class="control-row" style="margin-top:0.75rem;">
+        <span class="control-label" style="white-space:nowrap;">Police</span>
+      </div>
+      <select id="select-font" style="margin-top:0.4rem;">
+        <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+        <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
+        <option value="'Syne', sans-serif">Syne</option>
+        <option value="'Playfair Display', serif">Playfair Display</option>
+        <option value="'Crimson Pro', serif" selected>Crimson Pro</option>
+        <option value="'DM Mono', monospace">DM Mono</option>
+        <option value="Georgia, serif">Georgia</option>
+        <option value="'Arial', sans-serif">Arial</option>
+        <option value="'Times New Roman', serif">Times New Roman</option>
+        <option value="'Courier New', monospace">Courier New</option>
+      </select>
+      <div class="control-row" style="margin-top:0.75rem;">
+        <span class="control-label">Interligne</span>
+        <span class="control-value" id="val-lh">1.6</span>
+      </div>
+      <input type="range" id="slider-lh" min="1" max="3" step="0.1" value="1.6">
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Couleurs -->
+    <div>
+      <div class="section-title">Couleur du texte</div>
+      <div class="color-row" id="color-row">
+        <div class="color-swatch active" data-color="#f0f0f0" style="background:#f0f0f0"></div>
+        <div class="color-swatch" data-color="#e8ff5a" style="background:#e8ff5a"></div>
+        <div class="color-swatch" data-color="#5affd6" style="background:#5affd6"></div>
+        <div class="color-swatch" data-color="#ff9f5a" style="background:#ff9f5a"></div>
+        <div class="color-swatch" data-color="#ff5a9f" style="background:#ff5a9f"></div>
+        <div class="color-swatch" data-color="#a78bfa" style="background:#a78bfa"></div>
+        <div class="color-swatch" data-color="#000000" style="background:#000; border:1px solid #444"></div>
+      </div>
+      <div class="control-row" style="margin-top:0.75rem;">
+        <span class="control-label">Fond</span>
+        <span class="control-value" id="val-bg">—</span>
+      </div>
+      <div class="color-row" id="bg-color-row">
+        <div class="color-swatch active" data-color="#0a0a0f" style="background:#0a0a0f; border:1px solid #333"></div>
+        <div class="color-swatch" data-color="#ffffff" style="background:#fff; border:1px solid #ddd"></div>
+        <div class="color-swatch" data-color="#1a1a2e" style="background:#1a1a2e"></div>
+        <div class="color-swatch" data-color="#0d2137" style="background:#0d2137"></div>
+        <div class="color-swatch" data-color="#1a0a00" style="background:#1a0a00"></div>
+        <div class="color-swatch" data-color="#0a1a0a" style="background:#0a1a0a"></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Options -->
+    <div>
+      <div class="section-title">Options</div>
+      <div class="control-group" style="gap:0.75rem;">
+        <div class="toggle-row">
+          <span class="control-label">Mode miroir</span>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-mirror">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span class="control-label">Ligne de focus</span>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-focus" checked>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span class="control-label">Défilement lisse</span>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-smooth" checked>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN AREA -->
+  <main class="display-area">
+
+    <!-- Timer overlay -->
+    <div id="timer-overlay" class="hidden">
+      <div class="timer-label">Démarrage dans</div>
+      <div class="timer-count" id="timer-count">5</div>
+      <div class="timer-bar-wrap"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>
+    </div>
+
+    <!-- Prompter canvas -->
+    <div id="prompter-canvas">
+      <div class="focus-line" id="focus-line"></div>
+      <div id="text-track">
+        <p id="prompter-text"></p>
+      </div>
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">🎬</div>
+        <h2>Prompteur vide</h2>
+        <p>Saisissez votre texte dans le panneau de gauche,<br>puis cliquez sur <strong>Lancer</strong>.</p>
+      </div>
+    </div>
+
+    <!-- HUD flottant plein écran -->
+    <div id="fs-hud">
+      <span class="fs-speed-label" id="fs-speed-val">80 px/s</span>
+      <button class="fs-btn" id="fs-slower">− Lent</button>
+      <button class="fs-btn" id="fs-faster">+ Vite</button>
+      <button class="fs-btn" id="fs-pause-btn">⏸ Pause</button>
+      <button class="fs-btn fs-exit" id="fs-exit">✕ Quitter</button>
+    </div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <div class="status-item">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">En attente</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div class="kbd-hint">
+        <div class="kbd-item"><kbd>Espace</kbd> <span>Pause</span></div>
+        <div class="kbd-item"><kbd>↑↓</kbd> <span>Vitesse</span></div>
+        <div class="kbd-item"><kbd>R</kbd> <span>Reset</span></div>
+        <div class="kbd-item"><kbd>F</kbd> <span>Plein écran</span></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const scriptInput = document.getElementById('script-input');
+const sliderTimer = document.getElementById('slider-timer');
+const sliderSpeed = document.getElementById('slider-speed');
+const sliderSize = document.getElementById('slider-size');
+const sliderLh = document.getElementById('slider-lh');
+const selectFont = document.getElementById('select-font');
+const toggleMirror = document.getElementById('toggle-mirror');
+const toggleFocus = document.getElementById('toggle-focus');
+const toggleSmooth = document.getElementById('toggle-smooth');
+const btnStart = document.getElementById('btn-start');
+const btnStop = document.getElementById('btn-stop');
+const btnFullscreen = document.getElementById('btn-fullscreen');
+const timerOverlay = document.getElementById('timer-overlay');
+const timerCount = document.getElementById('timer-count');
+const timerBar = document.getElementById('timer-bar');
+const prompterCanvas = document.getElementById('prompter-canvas');
+const textTrack = document.getElementById('text-track');
+const prompterText = document.getElementById('prompter-text');
+const focusLine = document.getElementById('focus-line');
+const emptyState = document.getElementById('empty-state');
+const statusDot = document.getElementById('status-dot');
+const statusText = document.getElementById('status-text');
+const progressFill = document.getElementById('progress-fill');
+
+// State
+let isRunning = false;
+let isPaused = false;
+let scrollPos = 0;
+let animFrame = null;
+let timerInterval = null;
+let lastTime = null;
+let currentSpeed = 80;
+let textColor = '#f0f0f0';
+let bgColor = '#0a0a0f';
+
+// Init display
+function updateDisplay() {
+  const size = parseInt(sliderSize.value);
+  const lh = parseFloat(sliderLh.value);
+  const font = selectFont.value;
+  textTrack.style.fontSize = size + 'px';
+  textTrack.style.lineHeight = lh;
+  textTrack.style.fontFamily = font;
+  textTrack.style.color = textColor;
+  prompterCanvas.style.background = bgColor;
+  textTrack.classList.toggle('mirrored', toggleMirror.checked);
+  focusLine.style.display = toggleFocus.checked ? 'block' : 'none';
+  document.getElementById('val-timer').textContent = sliderTimer.value + 's';
+  document.getElementById('val-speed').textContent = sliderSpeed.value;
+  document.getElementById('val-size').textContent = size + 'px';
+  document.getElementById('val-lh').textContent = parseFloat(sliderLh.value).toFixed(1);
+  currentSpeed = parseInt(sliderSpeed.value);
+}
+
+sliderTimer.addEventListener('input', updateDisplay);
+sliderSpeed.addEventListener('input', () => { currentSpeed = parseInt(sliderSpeed.value); document.getElementById('val-speed').textContent = sliderSpeed.value; });
+sliderSize.addEventListener('input', updateDisplay);
+sliderLh.addEventListener('input', updateDisplay);
+selectFont.addEventListener('change', updateDisplay);
+toggleMirror.addEventListener('change', updateDisplay);
+toggleFocus.addEventListener('change', updateDisplay);
+
+// Text color swatches
+document.getElementById('color-row').querySelectorAll('.color-swatch').forEach(sw => {
+  sw.addEventListener('click', () => {
+    document.getElementById('color-row').querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+    sw.classList.add('active');
+    textColor = sw.dataset.color;
+    textTrack.style.color = textColor;
+  });
+});
+
+// BG color swatches
+document.getElementById('bg-color-row').querySelectorAll('.color-swatch').forEach(sw => {
+  sw.addEventListener('click', () => {
+    document.getElementById('bg-color-row').querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+    sw.classList.add('active');
+    bgColor = sw.dataset.color;
+    prompterCanvas.style.background = bgColor;
+  });
+});
+
+// Timer display
+function runTimer(seconds, onComplete) {
+  timerOverlay.classList.remove('hidden');
+  timerCount.textContent = seconds;
+  timerBar.style.width = '100%';
+  if (seconds === 0) { timerOverlay.classList.add('hidden'); onComplete(); return; }
+  let remaining = seconds;
+  timerBar.style.transition = 'none';
+  setTimeout(() => {
+    timerBar.style.transition = 'width ' + seconds + 's linear';
+    timerBar.style.width = '0%';
+  }, 50);
+  timerInterval = setInterval(() => {
+    remaining--;
+    timerCount.textContent = remaining;
+    timerCount.classList.add('pulse');
+    setTimeout(() => timerCount.classList.remove('pulse'), 150);
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      timerOverlay.classList.add('hidden');
+      onComplete();
+    }
+  }, 1000);
+}
+
+// Animation loop
+function scroll(timestamp) {
+  if (!lastTime) lastTime = timestamp;
+  const delta = (timestamp - lastTime) / 1000;
+  lastTime = timestamp;
+
+  if (!isPaused) {
+    scrollPos += currentSpeed * delta;
+    textTrack.style.transform = (toggleMirror.checked ? 'scaleX(-1) ' : '') + 'translateY(-' + scrollPos + 'px)';
+
+    // Progress
+    const totalHeight = textTrack.scrollHeight - prompterCanvas.clientHeight;
+    const pct = Math.min(100, (scrollPos / Math.max(1, totalHeight)) * 100);
+    progressFill.style.width = Math.round(pct) + '%';
+
+    if (scrollPos >= totalHeight) {
+      stopPrompter(true);
+      return;
+    }
+  }
+  animFrame = requestAnimationFrame(scroll);
+}
+
+function startPrompter() {
+  const text = scriptInput.value.trim();
+  if (!text) { alert('Veuillez entrer un texte.'); return; }
+
+  // Set text
+  prompterText.textContent = text;
+  emptyState.style.display = 'none';
+  scrollPos = 0;
+  textTrack.style.transform = '';
+  lastTime = null;
+  isRunning = true;
+  isPaused = false;
+
+  btnStart.textContent = '⏸ Pause';
+  btnStop.disabled = false;
+  statusDot.classList.add('active');
+
+  const delay = parseInt(sliderTimer.value);
+  statusText.textContent = delay > 0 ? 'Démarrage dans ' + delay + 's…' : 'Défilement…';
+
+  runTimer(delay, () => {
+    statusText.textContent = 'Défilement en cours';
+    animFrame = requestAnimationFrame(scroll);
+  });
+}
+
+function pausePrompter() {
+  isPaused = !isPaused;
+  lastTime = null;
+  btnStart.textContent = isPaused ? '▶ Reprendre' : '⏸ Pause';
+  document.getElementById('fs-pause-btn').textContent = isPaused ? '▶ Reprendre' : '⏸ Pause';
+  statusText.textContent = isPaused ? 'En pause' : 'Défilement en cours';
+  statusDot.classList.toggle('active', !isPaused);
+  if (!isPaused) animFrame = requestAnimationFrame(scroll);
+}
+
+function stopPrompter(ended = false) {
+  cancelAnimationFrame(animFrame);
+  clearInterval(timerInterval);
+  timerOverlay.classList.add('hidden');
+  isRunning = false;
+  isPaused = false;
+  scrollPos = 0;
+  lastTime = null;
+  textTrack.style.transform = '';
+  progressFill.style.width = '0%';
+  btnStart.textContent = '▶ Lancer';
+  btnStop.disabled = true;
+  statusDot.classList.remove('active');
+  statusText.textContent = ended ? 'Terminé ✓' : 'En attente';
+}
+
+btnStart.addEventListener('click', () => {
+  if (!isRunning) startPrompter();
+  else pausePrompter();
+});
+
+btnStop.addEventListener('click', () => stopPrompter(false));
+
+function enterFullscreen() {
+  const el = document.documentElement;
+  if (el.requestFullscreen) el.requestFullscreen();
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  btnFullscreen.textContent = '✕ Quitter';
+}
+function exitFullscreen() {
+  if (document.exitFullscreen) document.exitFullscreen();
+  else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  btnFullscreen.textContent = '⛶ Plein écran';
+}
+btnFullscreen.addEventListener('click', () => {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) enterFullscreen();
+  else exitFullscreen();
+});
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) btnFullscreen.textContent = '⛶ Plein écran';
+});
+
+// HUD fullscreen controls
+const fsSpeedVal = document.getElementById('fs-speed-val');
+function updateFsSpeed() { fsSpeedVal.textContent = currentSpeed + ' px/s'; }
+document.getElementById('fs-slower').addEventListener('click', () => {
+  currentSpeed = Math.max(10, currentSpeed - 15);
+  sliderSpeed.value = currentSpeed;
+  document.getElementById('val-speed').textContent = currentSpeed;
+  updateFsSpeed();
+});
+document.getElementById('fs-faster').addEventListener('click', () => {
+  currentSpeed = Math.min(400, currentSpeed + 15);
+  sliderSpeed.value = currentSpeed;
+  document.getElementById('val-speed').textContent = currentSpeed;
+  updateFsSpeed();
+});
+document.getElementById('fs-pause-btn').addEventListener('click', () => {
+  if (!isRunning) startPrompter();
+  else pausePrompter();
+  document.getElementById('fs-pause-btn').textContent = isPaused ? '▶ Reprendre' : '⏸ Pause';
+});
+document.getElementById('fs-exit').addEventListener('click', exitFullscreen);
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+  switch(e.key) {
+    case ' ':
+      e.preventDefault();
+      if (!isRunning) startPrompter();
+      else pausePrompter();
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      sliderSpeed.value = Math.min(400, parseInt(sliderSpeed.value) + 10);
+      currentSpeed = parseInt(sliderSpeed.value);
+      document.getElementById('val-speed').textContent = sliderSpeed.value;
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      sliderSpeed.value = Math.max(10, parseInt(sliderSpeed.value) - 10);
+      currentSpeed = parseInt(sliderSpeed.value);
+      document.getElementById('val-speed').textContent = sliderSpeed.value;
+      break;
+    case 'r': case 'R':
+      stopPrompter(false);
+      break;
+    case 'f': case 'F':
+      btnFullscreen.click();
+      break;
+  }
+});
+
+// Init
+updateDisplay();
+selectFont.value = "'Crimson Pro', serif";
+</script>
+</body>
+</html>
