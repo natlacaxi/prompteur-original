@@ -313,7 +313,7 @@
   }
   .timer-count {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 10rem;
+    font-size: clamp(5rem, 18vw, 10rem);
     line-height: 1;
     color: var(--accent);
     text-shadow: 0 0 60px rgba(232,255,90,0.3);
@@ -472,7 +472,7 @@
           <span class="control-label">Secondes</span>
           <span class="control-value" id="val-timer">5s</span>
         </div>
-        <input type="range" id="slider-timer" min="0" max="30" step="1" value="5">
+        <input type="range" id="slider-timer" min="0" max="120" step="1" value="5">
       </div>
     </div>
 
@@ -675,7 +675,11 @@ let currentSpeed = 80;
 let textColor = '#f0f0f0';
 let bgColor = '#0a0a0f';
 
-// Init display
+function formatTimer(s) {
+  if (s < 60) return s + 's';
+  const m = Math.floor(s / 60), sec = s % 60;
+  return m + 'min' + (sec > 0 ? sec.toString().padStart(2,'0') : '');
+}
 function updateDisplay() {
   const size = parseInt(sliderSize.value);
   const lh = parseFloat(sliderLh.value);
@@ -687,7 +691,7 @@ function updateDisplay() {
   prompterCanvas.style.background = bgColor;
   textTrack.classList.toggle('mirrored', toggleMirror.checked);
   focusLine.style.display = toggleFocus.checked ? 'block' : 'none';
-  document.getElementById('val-timer').textContent = sliderTimer.value + 's';
+  document.getElementById('val-timer').textContent = formatTimer(parseInt(sliderTimer.value));
   document.getElementById('val-speed').textContent = sliderSpeed.value;
   document.getElementById('val-size').textContent = size + 'px';
   document.getElementById('val-lh').textContent = parseFloat(sliderLh.value).toFixed(1);
@@ -722,10 +726,15 @@ document.getElementById('bg-color-row').querySelectorAll('.color-swatch').forEac
   });
 });
 
-// Timer display
+function formatCountdown(s) {
+  if (s < 60) return s;
+  const m = Math.floor(s / 60), sec = s % 60;
+  return m + ':' + sec.toString().padStart(2, '0');
+}
+
 function runTimer(seconds, onComplete) {
   timerOverlay.classList.remove('hidden');
-  timerCount.textContent = seconds;
+  timerCount.textContent = formatCountdown(seconds);
   timerBar.style.width = '100%';
   if (seconds === 0) { timerOverlay.classList.add('hidden'); onComplete(); return; }
   let remaining = seconds;
@@ -736,7 +745,7 @@ function runTimer(seconds, onComplete) {
   }, 50);
   timerInterval = setInterval(() => {
     remaining--;
-    timerCount.textContent = remaining;
+    timerCount.textContent = formatCountdown(remaining);
     timerCount.classList.add('pulse');
     setTimeout(() => timerCount.classList.remove('pulse'), 150);
     if (remaining <= 0) {
