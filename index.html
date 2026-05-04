@@ -153,6 +153,25 @@ textarea::placeholder{color:var(--muted)}
 kbd{font-family:'DM Mono',monospace;font-size:0.6rem;background:var(--surface2);border:1px solid var(--border2);border-radius:3px;padding:1px 4px;color:rgba(255,255,255,0.5)}
 [data-theme="light"] kbd{color:rgba(0,0,0,0.45)}
 
+/* Big corner timer */
+#big-timer{
+  position:absolute;
+  bottom:1.5rem;
+  right:1.75rem;
+  z-index:6;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(3rem,7vw,5.5rem);
+  line-height:1;
+  color:var(--accent);
+  opacity:0.85;
+  letter-spacing:0.04em;
+  pointer-events:none;
+  text-shadow:0 2px 24px rgba(0,0,0,0.7);
+  transition:opacity 0.3s;
+  user-select:none;
+}
+#big-timer.hidden{opacity:0}
+
 /* Fullscreen HUD */
 #fs-hud{display:none;position:fixed;bottom:1.25rem;right:1.25rem;z-index:9999;gap:0.4rem;align-items:center}
 :fullscreen #fs-hud,:-webkit-full-screen #fs-hud{display:flex!important}
@@ -390,6 +409,8 @@ kbd{font-family:'DM Mono',monospace;font-size:0.6rem;background:var(--surface2);
         <h2>Prompteur vide</h2>
         <p>Saisissez votre texte dans le panneau de gauche, puis cliquez sur <strong>Lancer</strong>.</p>
       </div>
+      <!-- Big corner timer -->
+      <div id="big-timer" class="hidden">0:00</div>
     </div>
 
     <!-- Fullscreen HUD -->
@@ -577,14 +598,20 @@ function runTimer(seconds, onComplete) {
   }, 1000);
 }
 
+const bigTimer = document.getElementById('big-timer');
+
 // Live elapsed timer
 function startLiveTimer() {
   elapsedSeconds = 0;
   liveTimerEl.textContent = '0:00';
+  bigTimer.textContent = '0:00';
+  bigTimer.classList.remove('hidden');
   liveTimerInterval = setInterval(() => {
     if (!isPaused) {
       elapsedSeconds++;
-      liveTimerEl.textContent = fmtLive(elapsedSeconds);
+      const fmt = fmtLive(elapsedSeconds);
+      liveTimerEl.textContent = fmt;
+      bigTimer.textContent = fmt;
     }
   }, 1000);
 }
@@ -592,6 +619,8 @@ function stopLiveTimer() {
   clearInterval(liveTimerInterval);
   elapsedSeconds = 0;
   liveTimerEl.textContent = '0:00';
+  bigTimer.textContent = '0:00';
+  bigTimer.classList.add('hidden');
 }
 
 // Scroll animation
