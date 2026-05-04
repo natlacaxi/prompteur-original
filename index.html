@@ -4,593 +4,375 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PROMPTEUR PRO</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@400;700&family=Space+Grotesk:wght@300;400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-  :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --surface2: #18181f;
-    --border: rgba(255,255,255,0.07);
-    --border-bright: rgba(255,255,255,0.15);
-    --accent: #e8ff5a;
-    --accent2: #5affd6;
-    --text: #f0f0f0;
-    --muted: #666;
-    --danger: #ff5a5a;
-    --radius: 12px;
-  }
+/* ── THEMES ── */
+[data-theme="dark"]{
+  --bg:#0a0a0f;--surface:#111118;--surface2:#18181f;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);
+  --text:#f0f0f0;--muted:#555;--accent:#e8ff5a;--accent2:#5affd6;--danger:#ff5a5a;
+  --canvas-bg:#0a0a0f;
+}
+[data-theme="light"]{
+  --bg:#f5f5f0;--surface:#ffffff;--surface2:#eeede8;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.18);
+  --text:#111111;--muted:#999;--accent:#1a1a1a;--accent2:#2563eb;--danger:#dc2626;
+  --canvas-bg:#f5f5f0;
+}
+[data-theme="night"]{
+  --bg:#060d1f;--surface:#0b1630;--surface2:#0f1e40;
+  --border:rgba(100,160,255,0.1);--border2:rgba(100,160,255,0.2);
+  --text:#d4e8ff;--muted:#3a5a8a;--accent:#64a0ff;--accent2:#a78bfa;--danger:#f87171;
+  --canvas-bg:#060d1f;
+}
+[data-theme="cinema"]{
+  --bg:#0f0000;--surface:#1a0505;--surface2:#220a0a;
+  --border:rgba(255,80,80,0.1);--border2:rgba(255,80,80,0.2);
+  --text:#ffe0e0;--muted:#5a2020;--accent:#ff5a5a;--accent2:#ffb347;--danger:#ff3333;
+  --canvas-bg:#0f0000;
+}
+[data-theme="forest"]{
+  --bg:#050f08;--surface:#0a1a0e;--surface2:#0e2214;
+  --border:rgba(80,200,100,0.1);--border2:rgba(80,200,100,0.2);
+  --text:#d0f0d8;--muted:#2a5a38;--accent:#5aff8a;--accent2:#a3e635;--danger:#f87171;
+  --canvas-bg:#050f08;
+}
+[data-theme="amber"]{
+  --bg:#0f0900;--surface:#1a1100;--surface2:#221800;
+  --border:rgba(255,180,0,0.1);--border2:rgba(255,180,0,0.2);
+  --text:#fff3d0;--muted:#5a4010;--accent:#ffb400;--accent2:#ff8c42;--danger:#ff5252;
+  --canvas-bg:#0f0900;
+}
+[data-theme="pink"]{
+  --bg:#120010;--surface:#1e0018;--surface2:#280020;
+  --border:rgba(255,100,200,0.1);--border2:rgba(255,100,200,0.2);
+  --text:#ffe0f8;--muted:#5a1555;--accent:#ff64d4;--accent2:#a78bfa;--danger:#ff5a5a;
+  --canvas-bg:#120010;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Space Grotesk', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;display:flex;flex-direction:column;transition:background 0.3s,color 0.3s}
 
-  /* ── HEADER ── */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 2rem;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    position: relative;
-    z-index: 10;
-  }
-  .logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem;
-    letter-spacing: 0.15em;
-    color: var(--accent);
-  }
-  .logo span { color: var(--text); opacity: 0.4; }
-  .header-btns { display: flex; gap: 0.75rem; align-items: center; }
+/* ── HEADER ── */
+header{display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.5rem;border-bottom:1px solid var(--border);background:var(--surface);position:relative;z-index:10;gap:1rem}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.15em;color:var(--accent);flex-shrink:0}
+.logo span{color:var(--text);opacity:0.3}
+.header-btns{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap}
 
-  /* ── BUTTONS ── */
-  .btn {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    padding: 0.5rem 1.1rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-bright);
-    background: transparent;
-    color: var(--text);
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-  .btn:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.3); }
-  .btn.primary { background: var(--accent); color: #0a0a0f; border-color: var(--accent); font-weight: 700; }
-  .btn.primary:hover { background: #f5ff8a; }
-  .btn.danger { border-color: var(--danger); color: var(--danger); }
-  .btn.danger:hover { background: rgba(255,90,90,0.1); }
-  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+/* ── BUTTONS ── */
+.btn{font-family:'Space Grotesk',sans-serif;font-size:0.75rem;font-weight:500;letter-spacing:0.06em;padding:0.45rem 1rem;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--text);cursor:pointer;transition:all 0.2s;text-transform:uppercase;white-space:nowrap}
+.btn:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.3)}
+.btn.primary{background:var(--accent);color:#0a0a0f;border-color:var(--accent);font-weight:700}
+.btn.primary:hover{opacity:0.85}
+.btn.danger{border-color:var(--danger);color:var(--danger)}
+.btn.danger:hover{background:rgba(255,90,90,0.1)}
+.btn:disabled{opacity:0.3;cursor:not-allowed}
+.btn.sm{font-size:0.7rem;padding:0.35rem 0.7rem}
 
-  /* ── LAYOUT ── */
-  .workspace {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    flex: 1;
-    min-height: 0;
-  }
+/* ── LAYOUT ── */
+.workspace{display:grid;grid-template-columns:300px 1fr;flex:1;min-height:0}
 
-  /* ── SIDEBAR ── */
-  .sidebar {
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    padding: 1.5rem;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  .section-title {
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.75rem;
-  }
-  .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
-  .control-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
-  .control-label { font-size: 0.82rem; color: rgba(255,255,255,0.55); }
-  .control-value {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.78rem;
-    color: var(--accent);
-    min-width: 48px;
-    text-align: right;
-  }
+/* ── SIDEBAR ── */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:1.25rem;overflow-y:auto;display:flex;flex-direction:column;gap:1.2rem}
+.sec-title{font-size:0.6rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem}
+.ctrl-group{display:flex;flex-direction:column;gap:0.45rem}
+.ctrl-row{display:flex;align-items:center;justify-content:space-between;gap:0.5rem}
+.ctrl-label{font-size:0.78rem;color:rgba(255,255,255,0.5)}
+[data-theme="light"] .ctrl-label{color:rgba(0,0,0,0.45)}
+.ctrl-val{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--accent);min-width:44px;text-align:right;flex-shrink:0}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--surface2);border-radius:2px;outline:none;cursor:pointer;border:none;padding:0;margin:2px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--accent);cursor:pointer;transition:box-shadow 0.2s}
+input[type=range]::-webkit-slider-thumb:hover{box-shadow:0 0 0 5px rgba(232,255,90,0.2)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--accent);border:none;cursor:pointer}
+select{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:7px;padding:0.45rem 0.65rem;font-family:'Space Grotesk',sans-serif;font-size:0.78rem;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.65rem center;padding-right:1.8rem}
+select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,255,90,0.1)}
+.divider{height:1px;background:var(--border)}
+textarea{width:100%;min-height:120px;background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:7px;padding:0.65rem;font-family:'DM Mono',monospace;font-size:0.73rem;resize:vertical;outline:none;line-height:1.6}
+textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,255,90,0.08)}
+textarea::placeholder{color:var(--muted)}
 
-  input[type="range"] {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 3px;
-    background: var(--surface2);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-    border: none;
-    padding: 0;
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: var(--accent);
-    cursor: pointer;
-    box-shadow: 0 0 0 3px rgba(232,255,90,0.15);
-    transition: box-shadow 0.2s;
-  }
-  input[type="range"]::-webkit-slider-thumb:hover {
-    box-shadow: 0 0 0 6px rgba(232,255,90,0.2);
-  }
-  input[type="range"]::-moz-range-thumb {
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: none;
-    cursor: pointer;
-  }
+/* Toggle */
+.toggle-row{display:flex;align-items:center;justify-content:space-between}
+.toggle{position:relative;width:36px;height:18px;cursor:pointer;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;transition:background 0.2s}
+.toggle input:checked+.toggle-track{background:var(--accent);border-color:var(--accent)}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:12px;height:12px;background:white;border-radius:50%;transition:transform 0.2s;pointer-events:none}
+.toggle input:checked~.toggle-thumb{transform:translateX(18px)}
 
-  select {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border-bright);
-    color: var(--text);
-    border-radius: 8px;
-    padding: 0.5rem 0.75rem;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.82rem;
-    cursor: pointer;
-    outline: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    padding-right: 2rem;
-  }
-  select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(232,255,90,0.1); }
+/* Color swatches */
+.swatch-row{display:flex;gap:0.35rem;flex-wrap:wrap}
+.swatch{width:24px;height:24px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:transform 0.15s,border-color 0.15s;flex-shrink:0}
+.swatch:hover{transform:scale(1.12)}
+.swatch.active{border-color:var(--text)}
 
-  .divider { height: 1px; background: var(--border); }
+/* ── DISPLAY AREA ── */
+.display-area{display:flex;flex-direction:column;position:relative;overflow:hidden}
 
-  /* Color swatches */
-  .color-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-  .color-swatch {
-    width: 28px; height: 28px;
-    border-radius: 6px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: transform 0.15s, border-color 0.15s;
-  }
-  .color-swatch:hover { transform: scale(1.1); }
-  .color-swatch.active { border-color: white; }
+/* Timer overlay */
+#timer-overlay{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;transition:opacity 0.4s}
+#timer-overlay.hidden{opacity:0;pointer-events:none}
+.timer-label{font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:0.2em;color:var(--muted);margin-bottom:0.75rem;text-transform:uppercase}
+.timer-count{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,16vw,9rem);line-height:1;color:var(--accent);transition:transform 0.15s}
+.timer-count.pulse{transform:scale(1.06)}
+.timer-bar-wrap{width:160px;height:2px;background:var(--surface2);border-radius:1px;margin-top:1.5rem}
+.timer-bar{height:100%;background:var(--accent);border-radius:1px;transition:width 1s linear}
 
-  /* Mirror mode toggle */
-  .toggle-row { display: flex; align-items: center; justify-content: space-between; }
-  .toggle {
-    position: relative;
-    width: 38px; height: 20px;
-    cursor: pointer;
-  }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-track {
-    position: absolute; inset: 0;
-    background: var(--surface2);
-    border: 1px solid var(--border-bright);
-    border-radius: 20px;
-    transition: background 0.2s;
-  }
-  .toggle input:checked + .toggle-track { background: var(--accent); border-color: var(--accent); }
-  .toggle-thumb {
-    position: absolute;
-    top: 2px; left: 2px;
-    width: 14px; height: 14px;
-    background: white;
-    border-radius: 50%;
-    transition: transform 0.2s;
-    pointer-events: none;
-  }
-  .toggle input:checked ~ .toggle-thumb { transform: translateX(18px); }
+/* Prompter canvas */
+#prompter-canvas{flex:1;overflow:hidden;position:relative;background:var(--canvas-bg);transition:background 0.3s}
+#text-track{position:absolute;width:100%;padding:20vh 10% 30vh;will-change:transform;line-height:1.6;transition:filter 0.3s}
+#text-track.mirrored{transform:scaleX(-1)}
+#text-track p{margin:0;white-space:pre-wrap;word-break:break-word}
 
-  /* Text area */
-  textarea {
-    width: 100%;
-    min-height: 140px;
-    background: var(--surface2);
-    border: 1px solid var(--border-bright);
-    color: var(--text);
-    border-radius: 8px;
-    padding: 0.75rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.78rem;
-    resize: vertical;
-    outline: none;
-    line-height: 1.6;
-  }
-  textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(232,255,90,0.08); }
-  textarea::placeholder { color: var(--muted); }
+/* Focus gradient */
+#prompter-canvas::before,#prompter-canvas::after{content:'';position:absolute;left:0;right:0;height:22%;z-index:5;pointer-events:none}
+#prompter-canvas::before{top:0;background:linear-gradient(to bottom,var(--canvas-bg),transparent)}
+#prompter-canvas::after{bottom:0;background:linear-gradient(to top,var(--canvas-bg),transparent)}
+.focus-line{position:absolute;top:50%;left:6%;right:6%;height:1px;background:rgba(232,255,90,0.18);transform:translateY(-50%);z-index:4;border-radius:1px}
 
-  /* ── FULLSCREEN MODE ── */
-  :fullscreen #prompter-canvas,
-  :-webkit-full-screen #prompter-canvas {
-    width: 100vw !important;
-    height: 100vh !important;
-  }
-  :fullscreen #text-track,
-  :-webkit-full-screen #text-track {
-    font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif !important;
-    font-weight: 900 !important;
-    font-size: 96px !important;
-    padding: 20vh 6vw !important;
-    line-height: 1.25 !important;
-    letter-spacing: -0.01em !important;
-  }
-  :fullscreen .status-bar,
-  :-webkit-full-screen .status-bar { display: none !important; }
-  :fullscreen header,
-  :-webkit-full-screen header { display: none !important; }
-  :fullscreen .sidebar,
-  :-webkit-full-screen .sidebar { display: none !important; }
-  :fullscreen .workspace,
-  :-webkit-full-screen .workspace { grid-template-columns: 1fr !important; }
-  :fullscreen .display-area,
-  :-webkit-full-screen .display-area { height: 100vh !important; }
+/* Empty state */
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6rem;color:var(--muted);text-align:center;padding:2rem;pointer-events:none;position:absolute;inset:0}
+.empty-state h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.1em;opacity:0.2;color:var(--text)}
+.empty-state p{font-size:0.75rem;opacity:0.35;max-width:260px}
 
-  /* HUD flottant en plein écran */
-  #fs-hud {
-    display: none;
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    z-index: 9999;
-    gap: 0.5rem;
-    align-items: center;
-  }
-  :fullscreen #fs-hud,
-  :-webkit-full-screen #fs-hud { display: flex !important; }
-  .fs-btn {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 0.45rem 1rem;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(0,0,0,0.7);
-    color: rgba(255,255,255,0.8);
-    cursor: pointer;
-    backdrop-filter: blur(8px);
-    transition: all 0.2s;
-  }
-  .fs-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); }
-  .fs-btn.fs-exit { color: var(--danger); border-color: rgba(255,90,90,0.4); }
-  .fs-btn.fs-exit:hover { background: rgba(255,90,90,0.15); }
-  .fs-speed-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    color: rgba(255,255,255,0.4);
-    padding: 0 0.5rem;
-  }
+/* Status bar */
+.status-bar{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 1.2rem;background:var(--surface);border-top:1px solid var(--border);font-size:0.68rem;color:var(--muted);font-family:'DM Mono',monospace;gap:0.75rem;flex-wrap:wrap}
+.status-item{display:flex;align-items:center;gap:0.4rem}
+.status-dot{width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.status-dot.active{background:var(--accent);animation:pdot 1.5s infinite}
+@keyframes pdot{0%,100%{opacity:1}50%{opacity:0.3}}
+.progress-wrap{width:100px;height:2px;background:var(--surface2);border-radius:1px;flex-shrink:0}
+.progress-fill{height:100%;background:var(--accent2);border-radius:1px;transition:width 0.3s;width:0%}
 
-  /* ── MAIN DISPLAY ── */
-  .display-area {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-  }
+/* Live timer display */
+.live-timer-display{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--accent);flex-shrink:0}
 
-  /* TIMER OVERLAY */
-  #timer-overlay {
-    position: absolute;
-    inset: 0;
-    background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    transition: opacity 0.5s;
-  }
-  #timer-overlay.hidden { opacity: 0; pointer-events: none; }
-  .timer-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1rem;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-  }
-  .timer-count {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(5rem, 18vw, 10rem);
-    line-height: 1;
-    color: var(--accent);
-    text-shadow: 0 0 60px rgba(232,255,90,0.3);
-    transition: all 0.15s;
-  }
-  .timer-count.pulse { transform: scale(1.05); }
-  .timer-bar-wrap { width: 200px; height: 3px; background: var(--surface2); border-radius: 2px; margin-top: 2rem; }
-  .timer-bar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 1s linear; }
+.kbd-hint{display:flex;gap:0.75rem;flex-wrap:wrap}
+.kbd-item{display:flex;align-items:center;gap:0.25rem}
+kbd{font-family:'DM Mono',monospace;font-size:0.6rem;background:var(--surface2);border:1px solid var(--border2);border-radius:3px;padding:1px 4px;color:rgba(255,255,255,0.5)}
+[data-theme="light"] kbd{color:rgba(0,0,0,0.45)}
 
-  /* PROMPTER CANVAS */
-  #prompter-canvas {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-    background: var(--bg);
-  }
-  #text-track {
-    position: absolute;
-    width: 100%;
-    padding: 20vh 8vw;
-    will-change: transform;
-    line-height: 1.6;
-    transition: filter 0.3s;
-  }
-  #text-track.mirrored { transform: scaleX(-1); }
-  #text-track p {
-    margin: 0;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-  #text-track p .word { display: inline; }
-  #text-track p .word.highlight { color: var(--accent); font-weight: 700; }
+/* Fullscreen HUD */
+#fs-hud{display:none;position:fixed;bottom:1.25rem;right:1.25rem;z-index:9999;gap:0.4rem;align-items:center}
+:fullscreen #fs-hud,:-webkit-full-screen #fs-hud{display:flex!important}
+.fs-btn{font-family:'Space Grotesk',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0.4rem 0.9rem;border-radius:7px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.75);color:rgba(255,255,255,0.8);cursor:pointer;backdrop-filter:blur(8px);transition:all 0.2s}
+.fs-btn:hover{background:rgba(255,255,255,0.12)}
+.fs-btn.fs-exit{color:#ff5a5a;border-color:rgba(255,90,90,0.4)}
 
-  /* Focus gradient */
-  #prompter-canvas::before,
-  #prompter-canvas::after {
-    content: '';
-    position: absolute;
-    left: 0; right: 0;
-    height: 25%;
-    z-index: 5;
-    pointer-events: none;
-  }
-  #prompter-canvas::before {
-    top: 0;
-    background: linear-gradient(to bottom, var(--bg), transparent);
-  }
-  #prompter-canvas::after {
-    bottom: 0;
-    background: linear-gradient(to top, var(--bg), transparent);
-  }
-
-  /* Focus line */
-  .focus-line {
-    position: absolute;
-    top: 50%;
-    left: 5vw; right: 5vw;
-    height: 2px;
-    background: rgba(232,255,90,0.15);
-    transform: translateY(-50%);
-    z-index: 4;
-    border-radius: 1px;
-  }
-
-  /* STATUS BAR */
-  .status-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.6rem 1.5rem;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    font-size: 0.75rem;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-  }
-  .status-item { display: flex; align-items: center; gap: 0.5rem; }
-  .status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--muted);
-  }
-  .status-dot.active { background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: pulse-dot 1.5s infinite; }
-  @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
-  .progress-wrap { width: 120px; height: 3px; background: var(--surface2); border-radius: 2px; }
-  .progress-fill { height: 100%; background: var(--accent2); border-radius: 2px; transition: width 0.3s; }
-
-  /* KEYBOARD SHORTCUTS HINT */
-  .kbd-hint {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .kbd-item { display: flex; align-items: center; gap: 0.3rem; }
-  kbd {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    background: var(--surface2);
-    border: 1px solid var(--border-bright);
-    border-radius: 4px;
-    padding: 1px 5px;
-    color: rgba(255,255,255,0.6);
-  }
-
-  /* EMPTY STATE */
-  .empty-state {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    color: var(--muted);
-    text-align: center;
-    padding: 2rem;
-    pointer-events: none;
-  }
-  .empty-icon {
-    font-size: 3rem;
-    opacity: 0.2;
-  }
-  .empty-state h2 { font-family: 'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:0.1em; opacity:0.25; color:var(--text); }
-  .empty-state p { font-size:0.8rem; opacity:0.4; }
+/* Fullscreen overrides */
+:fullscreen header,:-webkit-full-screen header{display:none!important}
+:fullscreen .sidebar,:-webkit-full-screen .sidebar{display:none!important}
+:fullscreen .workspace,:-webkit-full-screen .workspace{grid-template-columns:1fr!important}
+:fullscreen .display-area,:-webkit-full-screen .display-area{height:100vh!important}
+:fullscreen .status-bar,:-webkit-full-screen .status-bar{display:none!important}
+:fullscreen #text-track,:-webkit-full-screen #text-track{padding:22vh 8vw 30vh!important}
 </style>
 </head>
-<body>
+<body data-theme="dark">
 
-<!-- HEADER -->
 <header>
   <div class="logo">PROMPTEUR <span>PRO</span></div>
   <div class="header-btns">
-    <button class="btn" id="btn-fullscreen">⛶ Plein écran</button>
-    <button class="btn danger" id="btn-stop" disabled>■ Stop</button>
+    <button class="btn sm" id="btn-fullscreen">⛶ Plein écran</button>
+    <button class="btn danger sm" id="btn-stop" disabled>■ Stop</button>
     <button class="btn primary" id="btn-start">▶ Lancer</button>
   </div>
 </header>
 
 <div class="workspace">
-
-  <!-- SIDEBAR -->
   <aside class="sidebar">
 
     <!-- Texte -->
     <div>
-      <div class="section-title">Texte du script</div>
+      <div class="sec-title">Texte du script</div>
       <textarea id="script-input" placeholder="Collez votre texte ici…&#10;&#10;Le prompteur défilera automatiquement dès le lancement."></textarea>
     </div>
-
     <div class="divider"></div>
 
-    <!-- Timer -->
+    <!-- Thème -->
     <div>
-      <div class="section-title">Délai avant départ</div>
-      <div class="control-group">
-        <div class="control-row">
-          <span class="control-label">Secondes</span>
-          <span class="control-value" id="val-timer">5s</span>
+      <div class="sec-title">Thème de couleur</div>
+      <select id="select-theme">
+        <option value="dark">🌑 Sombre (défaut)</option>
+        <option value="light">☀️ Clair</option>
+        <option value="night">🌌 Nuit bleue</option>
+        <option value="cinema">🎬 Cinéma rouge</option>
+        <option value="forest">🌿 Forêt</option>
+        <option value="amber">🌅 Ambre</option>
+        <option value="pink">🌸 Rose</option>
+      </select>
+    </div>
+    <div class="divider"></div>
+
+    <!-- Timer délai -->
+    <div>
+      <div class="sec-title">Délai avant départ</div>
+      <div class="ctrl-group">
+        <div class="ctrl-row">
+          <span class="ctrl-label">Secondes</span>
+          <span class="ctrl-val" id="val-timer">5s</span>
         </div>
-        <input type="range" id="slider-timer" min="0" max="120" step="1" value="5">
+        <input type="range" id="slider-timer" min="0" max="60" step="1" value="5">
       </div>
     </div>
-
     <div class="divider"></div>
 
     <!-- Vitesse -->
     <div>
-      <div class="section-title">Vitesse de défilement</div>
-      <div class="control-group">
-        <div class="control-row">
-          <span class="control-label">Pixels / sec</span>
-          <span class="control-value" id="val-speed">80</span>
+      <div class="sec-title">Vitesse de défilement</div>
+      <div class="ctrl-group">
+        <div class="ctrl-row">
+          <span class="ctrl-label">Pixels / sec</span>
+          <span class="ctrl-val" id="val-speed">80</span>
         </div>
         <input type="range" id="slider-speed" min="10" max="400" step="5" value="80">
       </div>
     </div>
-
     <div class="divider"></div>
 
     <!-- Typographie -->
     <div>
-      <div class="section-title">Typographie</div>
-      <div class="control-group">
-        <div class="control-row">
-          <span class="control-label">Taille</span>
-          <span class="control-value" id="val-size">52px</span>
+      <div class="sec-title">Typographie</div>
+      <div class="ctrl-group">
+        <div class="ctrl-row">
+          <span class="ctrl-label">Taille</span>
+          <span class="ctrl-val" id="val-size">52px</span>
         </div>
-        <input type="range" id="slider-size" min="18" max="120" step="2" value="52">
-      </div>
-      <div class="control-row" style="margin-top:0.75rem;">
-        <span class="control-label" style="white-space:nowrap;">Police</span>
-      </div>
-      <select id="select-font" style="margin-top:0.4rem;">
-        <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-        <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
-        <option value="'Syne', sans-serif">Syne</option>
-        <option value="'Playfair Display', serif">Playfair Display</option>
-        <option value="'Crimson Pro', serif" selected>Crimson Pro</option>
-        <option value="'DM Mono', monospace">DM Mono</option>
-        <option value="Georgia, serif">Georgia</option>
-        <option value="'Arial', sans-serif">Arial</option>
-        <option value="'Times New Roman', serif">Times New Roman</option>
-        <option value="'Courier New', monospace">Courier New</option>
-      </select>
-      <div class="control-row" style="margin-top:0.75rem;">
-        <span class="control-label">Interligne</span>
-        <span class="control-value" id="val-lh">1.6</span>
-      </div>
-      <input type="range" id="slider-lh" min="1" max="3" step="0.1" value="1.6">
-    </div>
+        <input type="range" id="slider-size" min="16" max="120" step="2" value="52">
 
+        <div class="ctrl-row" style="margin-top:0.5rem">
+          <span class="ctrl-label">Police</span>
+        </div>
+        <select id="select-font" style="margin-top:0.3rem">
+          <option value="'Space Grotesk',sans-serif">Space Grotesk</option>
+          <option value="'Bebas Neue',sans-serif">Bebas Neue</option>
+          <option value="'Syne',sans-serif">Syne</option>
+          <option value="'Playfair Display',serif">Playfair Display</option>
+          <option value="'Crimson Pro',serif" selected>Crimson Pro</option>
+          <option value="'DM Mono',monospace">DM Mono</option>
+          <option value="Georgia,serif">Georgia</option>
+          <option value="Arial,sans-serif">Arial</option>
+          <option value="'Times New Roman',serif">Times New Roman</option>
+          <option value="'Courier New',monospace">Courier New</option>
+        </select>
+
+        <div class="ctrl-row" style="margin-top:0.5rem">
+          <span class="ctrl-label">Interligne</span>
+          <span class="ctrl-val" id="val-lh">1.6</span>
+        </div>
+        <input type="range" id="slider-lh" min="1" max="3" step="0.1" value="1.6">
+
+        <div class="ctrl-row" style="margin-top:0.5rem">
+          <span class="ctrl-label">Espacement lettres</span>
+          <span class="ctrl-val" id="val-ls">0</span>
+        </div>
+        <input type="range" id="slider-ls" min="-2" max="10" step="0.5" value="0">
+
+        <div class="ctrl-row" style="margin-top:0.5rem">
+          <span class="ctrl-label">Largeur du texte</span>
+          <span class="ctrl-val" id="val-width">80%</span>
+        </div>
+        <input type="range" id="slider-width" min="30" max="100" step="5" value="80">
+
+        <div class="ctrl-row" style="margin-top:0.5rem">
+          <span class="ctrl-label">Alignement</span>
+        </div>
+        <select id="select-align" style="margin-top:0.3rem">
+          <option value="left">Gauche</option>
+          <option value="center">Centré</option>
+          <option value="right">Droite</option>
+          <option value="justify">Justifié</option>
+        </select>
+
+        <div class="ctrl-row" style="margin-top:0.5rem">
+          <span class="ctrl-label">Opacité texte</span>
+          <span class="ctrl-val" id="val-opacity">100%</span>
+        </div>
+        <input type="range" id="slider-opacity" min="30" max="100" step="5" value="100">
+      </div>
+    </div>
     <div class="divider"></div>
 
-    <!-- Couleurs -->
+    <!-- Couleur texte manuelle -->
     <div>
-      <div class="section-title">Couleur du texte</div>
-      <div class="color-row" id="color-row">
-        <div class="color-swatch active" data-color="#f0f0f0" style="background:#f0f0f0"></div>
-        <div class="color-swatch" data-color="#e8ff5a" style="background:#e8ff5a"></div>
-        <div class="color-swatch" data-color="#5affd6" style="background:#5affd6"></div>
-        <div class="color-swatch" data-color="#ff9f5a" style="background:#ff9f5a"></div>
-        <div class="color-swatch" data-color="#ff5a9f" style="background:#ff5a9f"></div>
-        <div class="color-swatch" data-color="#a78bfa" style="background:#a78bfa"></div>
-        <div class="color-swatch" data-color="#000000" style="background:#000; border:1px solid #444"></div>
-      </div>
-      <div class="control-row" style="margin-top:0.75rem;">
-        <span class="control-label">Fond</span>
-        <span class="control-value" id="val-bg">—</span>
-      </div>
-      <div class="color-row" id="bg-color-row">
-        <div class="color-swatch active" data-color="#0a0a0f" style="background:#0a0a0f; border:1px solid #333"></div>
-        <div class="color-swatch" data-color="#ffffff" style="background:#fff; border:1px solid #ddd"></div>
-        <div class="color-swatch" data-color="#1a1a2e" style="background:#1a1a2e"></div>
-        <div class="color-swatch" data-color="#0d2137" style="background:#0d2137"></div>
-        <div class="color-swatch" data-color="#1a0a00" style="background:#1a0a00"></div>
-        <div class="color-swatch" data-color="#0a1a0a" style="background:#0a1a0a"></div>
+      <div class="sec-title">Couleur du texte</div>
+      <div class="swatch-row" id="color-row">
+        <div class="swatch active" data-color="#f0f0f0" style="background:#f0f0f0"></div>
+        <div class="swatch" data-color="#e8ff5a" style="background:#e8ff5a"></div>
+        <div class="swatch" data-color="#5affd6" style="background:#5affd6"></div>
+        <div class="swatch" data-color="#ff9f5a" style="background:#ff9f5a"></div>
+        <div class="swatch" data-color="#ff5a9f" style="background:#ff5a9f"></div>
+        <div class="swatch" data-color="#a78bfa" style="background:#a78bfa"></div>
+        <div class="swatch" data-color="#64a0ff" style="background:#64a0ff"></div>
+        <div class="swatch" data-color="#000000" style="background:#000;border:1px solid #555"></div>
       </div>
     </div>
-
     <div class="divider"></div>
 
     <!-- Options -->
     <div>
-      <div class="section-title">Options</div>
-      <div class="control-group" style="gap:0.75rem;">
+      <div class="sec-title">Options</div>
+      <div class="ctrl-group" style="gap:0.65rem">
         <div class="toggle-row">
-          <span class="control-label">Mode miroir</span>
-          <label class="toggle">
-            <input type="checkbox" id="toggle-mirror">
-            <div class="toggle-track"></div>
-            <div class="toggle-thumb"></div>
-          </label>
+          <span class="ctrl-label">Mode miroir</span>
+          <label class="toggle"><input type="checkbox" id="toggle-mirror"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
         </div>
         <div class="toggle-row">
-          <span class="control-label">Ligne de focus</span>
-          <label class="toggle">
-            <input type="checkbox" id="toggle-focus" checked>
-            <div class="toggle-track"></div>
-            <div class="toggle-thumb"></div>
-          </label>
+          <span class="ctrl-label">Ligne de focus</span>
+          <label class="toggle"><input type="checkbox" id="toggle-focus" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
         </div>
         <div class="toggle-row">
-          <span class="control-label">Défilement lisse</span>
-          <label class="toggle">
-            <input type="checkbox" id="toggle-smooth" checked>
-            <div class="toggle-track"></div>
-            <div class="toggle-thumb"></div>
-          </label>
+          <span class="ctrl-label">Retour au début auto</span>
+          <label class="toggle"><input type="checkbox" id="toggle-loop"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
         </div>
+        <div class="toggle-row">
+          <span class="ctrl-label">Texte en gras</span>
+          <label class="toggle"><input type="checkbox" id="toggle-bold"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+        <div class="toggle-row">
+          <span class="ctrl-label">Masquer fond (transparent)</span>
+          <label class="toggle"><input type="checkbox" id="toggle-nobg"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+
+    <!-- Marges -->
+    <div>
+      <div class="sec-title">Marges</div>
+      <div class="ctrl-group">
+        <div class="ctrl-row">
+          <span class="ctrl-label">Marge haute (% écran)</span>
+          <span class="ctrl-val" id="val-padtop">20%</span>
+        </div>
+        <input type="range" id="slider-padtop" min="5" max="60" step="5" value="20">
+        <div class="ctrl-row" style="margin-top:0.3rem">
+          <span class="ctrl-label">Marge côtés</span>
+          <span class="ctrl-val" id="val-padside">10%</span>
+        </div>
+        <input type="range" id="slider-padside" min="2" max="40" step="2" value="10">
+      </div>
+    </div>
+    <div class="divider"></div>
+
+    <!-- Vitesses rapides -->
+    <div>
+      <div class="sec-title">Vitesses rapides</div>
+      <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
+        <button class="btn sm" onclick="setSpeed(30)">Lent</button>
+        <button class="btn sm" onclick="setSpeed(80)">Normal</button>
+        <button class="btn sm" onclick="setSpeed(150)">Rapide</button>
+        <button class="btn sm" onclick="setSpeed(250)">Turbo</button>
       </div>
     </div>
 
   </aside>
 
-  <!-- MAIN AREA -->
+  <!-- MAIN DISPLAY -->
   <main class="display-area">
 
-    <!-- Timer overlay -->
+    <!-- Timer countdown overlay -->
     <div id="timer-overlay" class="hidden">
       <div class="timer-label">Démarrage dans</div>
       <div class="timer-count" id="timer-count">5</div>
@@ -604,15 +386,15 @@
         <p id="prompter-text"></p>
       </div>
       <div class="empty-state" id="empty-state">
-        <div class="empty-icon">🎬</div>
+        <div style="font-size:2.5rem;opacity:0.15">🎬</div>
         <h2>Prompteur vide</h2>
-        <p>Saisissez votre texte dans le panneau de gauche,<br>puis cliquez sur <strong>Lancer</strong>.</p>
+        <p>Saisissez votre texte dans le panneau de gauche, puis cliquez sur <strong>Lancer</strong>.</p>
       </div>
     </div>
 
-    <!-- HUD flottant plein écran -->
+    <!-- Fullscreen HUD -->
     <div id="fs-hud">
-      <span class="fs-speed-label" id="fs-speed-val">80 px/s</span>
+      <span style="font-family:'DM Mono',monospace;font-size:0.65rem;color:rgba(255,255,255,0.4);padding:0 0.4rem" id="fs-speed-val">80 px/s</span>
       <button class="fs-btn" id="fs-slower">− Lent</button>
       <button class="fs-btn" id="fs-faster">+ Vite</button>
       <button class="fs-btn" id="fs-pause-btn">⏸ Pause</button>
@@ -626,8 +408,9 @@
         <span id="status-text">En attente</span>
       </div>
       <div class="progress-wrap">
-        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        <div class="progress-fill" id="progress-fill"></div>
       </div>
+      <div class="live-timer-display" id="live-timer">0:00</div>
       <div class="kbd-hint">
         <div class="kbd-item"><kbd>Espace</kbd> <span>Pause</span></div>
         <div class="kbd-item"><kbd>↑↓</kbd> <span>Vitesse</span></div>
@@ -645,10 +428,19 @@ const sliderTimer = document.getElementById('slider-timer');
 const sliderSpeed = document.getElementById('slider-speed');
 const sliderSize = document.getElementById('slider-size');
 const sliderLh = document.getElementById('slider-lh');
+const sliderLs = document.getElementById('slider-ls');
+const sliderWidth = document.getElementById('slider-width');
+const sliderOpacity = document.getElementById('slider-opacity');
+const sliderPadtop = document.getElementById('slider-padtop');
+const sliderPadside = document.getElementById('slider-padside');
 const selectFont = document.getElementById('select-font');
+const selectAlign = document.getElementById('select-align');
+const selectTheme = document.getElementById('select-theme');
 const toggleMirror = document.getElementById('toggle-mirror');
 const toggleFocus = document.getElementById('toggle-focus');
-const toggleSmooth = document.getElementById('toggle-smooth');
+const toggleLoop = document.getElementById('toggle-loop');
+const toggleBold = document.getElementById('toggle-bold');
+const toggleNobg = document.getElementById('toggle-nobg');
 const btnStart = document.getElementById('btn-start');
 const btnStop = document.getElementById('btn-stop');
 const btnFullscreen = document.getElementById('btn-fullscreen');
@@ -663,117 +455,160 @@ const emptyState = document.getElementById('empty-state');
 const statusDot = document.getElementById('status-dot');
 const statusText = document.getElementById('status-text');
 const progressFill = document.getElementById('progress-fill');
+const liveTimerEl = document.getElementById('live-timer');
 
-// State
 let isRunning = false;
 let isPaused = false;
 let scrollPos = 0;
 let animFrame = null;
 let timerInterval = null;
+let liveTimerInterval = null;
 let lastTime = null;
 let currentSpeed = 80;
-let textColor = '#f0f0f0';
-let bgColor = '#0a0a0f';
+let textColor = null; // null = use theme default
+let elapsedSeconds = 0;
 
-function formatTimer(s) {
+function fmtTimer(s) {
   if (s < 60) return s + 's';
-  const m = Math.floor(s / 60), sec = s % 60;
+  const m = Math.floor(s/60), sec = s%60;
   return m + 'min' + (sec > 0 ? sec.toString().padStart(2,'0') : '');
 }
+function fmtLive(s) {
+  const m = Math.floor(s/60), sec = s%60;
+  return m + ':' + sec.toString().padStart(2,'0');
+}
+
 function updateDisplay() {
   const size = parseInt(sliderSize.value);
   const lh = parseFloat(sliderLh.value);
-  const font = selectFont.value;
+  const ls = parseFloat(sliderLs.value);
+  const width = parseInt(sliderWidth.value);
+  const opacity = parseInt(sliderOpacity.value);
+  const padtop = parseInt(sliderPadtop.value);
+  const padside = parseInt(sliderPadside.value);
+
   textTrack.style.fontSize = size + 'px';
   textTrack.style.lineHeight = lh;
-  textTrack.style.fontFamily = font;
-  textTrack.style.color = textColor;
-  prompterCanvas.style.background = bgColor;
+  textTrack.style.letterSpacing = ls + 'px';
+  textTrack.style.fontFamily = selectFont.value;
+  textTrack.style.fontWeight = toggleBold.checked ? '700' : '400';
+  textTrack.style.textAlign = selectAlign.value;
+  textTrack.style.opacity = opacity / 100;
+  textTrack.style.width = width + '%';
+  textTrack.style.left = ((100 - width) / 2) + '%';
+  textTrack.style.padding = padtop + 'vh ' + padside + '% ' + (padtop + 10) + 'vh';
+
+  if (textColor) textTrack.style.color = textColor;
+  else textTrack.style.color = '';
+
   textTrack.classList.toggle('mirrored', toggleMirror.checked);
   focusLine.style.display = toggleFocus.checked ? 'block' : 'none';
-  document.getElementById('val-timer').textContent = formatTimer(parseInt(sliderTimer.value));
+
+  if (toggleNobg.checked) prompterCanvas.style.background = 'transparent';
+  else prompterCanvas.style.background = '';
+
+  // Values
+  document.getElementById('val-timer').textContent = fmtTimer(parseInt(sliderTimer.value));
   document.getElementById('val-speed').textContent = sliderSpeed.value;
   document.getElementById('val-size').textContent = size + 'px';
-  document.getElementById('val-lh').textContent = parseFloat(sliderLh.value).toFixed(1);
+  document.getElementById('val-lh').textContent = lh.toFixed(1);
+  document.getElementById('val-ls').textContent = ls;
+  document.getElementById('val-width').textContent = width + '%';
+  document.getElementById('val-opacity').textContent = opacity + '%';
+  document.getElementById('val-padtop').textContent = padtop + '%';
+  document.getElementById('val-padside').textContent = padside + '%';
+
   currentSpeed = parseInt(sliderSpeed.value);
 }
 
-sliderTimer.addEventListener('input', updateDisplay);
-sliderSpeed.addEventListener('input', () => { currentSpeed = parseInt(sliderSpeed.value); document.getElementById('val-speed').textContent = sliderSpeed.value; });
-sliderSize.addEventListener('input', updateDisplay);
-sliderLh.addEventListener('input', updateDisplay);
-selectFont.addEventListener('change', updateDisplay);
-toggleMirror.addEventListener('change', updateDisplay);
-toggleFocus.addEventListener('change', updateDisplay);
+// Theme
+selectTheme.addEventListener('change', () => {
+  document.body.setAttribute('data-theme', selectTheme.value);
+  textColor = null;
+  document.querySelectorAll('#color-row .swatch').forEach(s => s.classList.remove('active'));
+  document.querySelector('#color-row .swatch').classList.add('active');
+  updateDisplay();
+});
 
 // Text color swatches
-document.getElementById('color-row').querySelectorAll('.color-swatch').forEach(sw => {
+document.getElementById('color-row').querySelectorAll('.swatch').forEach(sw => {
   sw.addEventListener('click', () => {
-    document.getElementById('color-row').querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+    document.getElementById('color-row').querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
     sw.classList.add('active');
     textColor = sw.dataset.color;
     textTrack.style.color = textColor;
   });
 });
 
-// BG color swatches
-document.getElementById('bg-color-row').querySelectorAll('.color-swatch').forEach(sw => {
-  sw.addEventListener('click', () => {
-    document.getElementById('bg-color-row').querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
-    sw.classList.add('active');
-    bgColor = sw.dataset.color;
-    prompterCanvas.style.background = bgColor;
-  });
+// All sliders & toggles
+[sliderTimer,sliderSize,sliderLh,sliderLs,sliderWidth,sliderOpacity,sliderPadtop,sliderPadside].forEach(s => s.addEventListener('input', updateDisplay));
+sliderSpeed.addEventListener('input', () => {
+  currentSpeed = parseInt(sliderSpeed.value);
+  document.getElementById('val-speed').textContent = sliderSpeed.value;
+  document.getElementById('fs-speed-val').textContent = currentSpeed + ' px/s';
 });
+[selectFont, selectAlign, toggleMirror, toggleFocus, toggleBold, toggleNobg, toggleLoop].forEach(el => el.addEventListener('change', updateDisplay));
 
-function formatCountdown(s) {
-  if (s < 60) return s;
-  const m = Math.floor(s / 60), sec = s % 60;
-  return m + ':' + sec.toString().padStart(2, '0');
+function setSpeed(v) {
+  currentSpeed = v;
+  sliderSpeed.value = v;
+  document.getElementById('val-speed').textContent = v;
+  document.getElementById('fs-speed-val').textContent = v + ' px/s';
 }
 
+// Timer countdown
 function runTimer(seconds, onComplete) {
   timerOverlay.classList.remove('hidden');
-  timerCount.textContent = formatCountdown(seconds);
+  timerCount.textContent = seconds === 0 ? '' : seconds;
+  timerBar.style.transition = 'none';
   timerBar.style.width = '100%';
   if (seconds === 0) { timerOverlay.classList.add('hidden'); onComplete(); return; }
-  let remaining = seconds;
-  timerBar.style.transition = 'none';
   setTimeout(() => {
     timerBar.style.transition = 'width ' + seconds + 's linear';
     timerBar.style.width = '0%';
   }, 50);
+  let remaining = seconds;
   timerInterval = setInterval(() => {
     remaining--;
-    timerCount.textContent = formatCountdown(remaining);
+    timerCount.textContent = remaining;
     timerCount.classList.add('pulse');
-    setTimeout(() => timerCount.classList.remove('pulse'), 150);
-    if (remaining <= 0) {
-      clearInterval(timerInterval);
-      timerOverlay.classList.add('hidden');
-      onComplete();
-    }
+    setTimeout(() => timerCount.classList.remove('pulse'), 120);
+    if (remaining <= 0) { clearInterval(timerInterval); timerOverlay.classList.add('hidden'); onComplete(); }
   }, 1000);
 }
 
-// Animation loop
+// Live elapsed timer
+function startLiveTimer() {
+  elapsedSeconds = 0;
+  liveTimerEl.textContent = '0:00';
+  liveTimerInterval = setInterval(() => {
+    if (!isPaused) {
+      elapsedSeconds++;
+      liveTimerEl.textContent = fmtLive(elapsedSeconds);
+    }
+  }, 1000);
+}
+function stopLiveTimer() {
+  clearInterval(liveTimerInterval);
+  elapsedSeconds = 0;
+  liveTimerEl.textContent = '0:00';
+}
+
+// Scroll animation
 function scroll(timestamp) {
   if (!lastTime) lastTime = timestamp;
   const delta = (timestamp - lastTime) / 1000;
   lastTime = timestamp;
-
   if (!isPaused) {
     scrollPos += currentSpeed * delta;
-    textTrack.style.transform = (toggleMirror.checked ? 'scaleX(-1) ' : '') + 'translateY(-' + scrollPos + 'px)';
-
-    // Progress
-    const totalHeight = textTrack.scrollHeight - prompterCanvas.clientHeight;
-    const pct = Math.min(100, (scrollPos / Math.max(1, totalHeight)) * 100);
+    const mirror = toggleMirror.checked ? 'scaleX(-1) ' : '';
+    textTrack.style.transform = mirror + 'translateY(-' + scrollPos + 'px)';
+    const totalH = textTrack.scrollHeight - prompterCanvas.clientHeight;
+    const pct = Math.min(100, (scrollPos / Math.max(1, totalH)) * 100);
     progressFill.style.width = Math.round(pct) + '%';
-
-    if (scrollPos >= totalHeight) {
-      stopPrompter(true);
-      return;
+    if (scrollPos >= totalH) {
+      if (toggleLoop.checked) { scrollPos = 0; }
+      else { stopPrompter(true); return; }
     }
   }
   animFrame = requestAnimationFrame(scroll);
@@ -782,8 +617,6 @@ function scroll(timestamp) {
 function startPrompter() {
   const text = scriptInput.value.trim();
   if (!text) { alert('Veuillez entrer un texte.'); return; }
-
-  // Set text
   prompterText.textContent = text;
   emptyState.style.display = 'none';
   scrollPos = 0;
@@ -791,16 +624,14 @@ function startPrompter() {
   lastTime = null;
   isRunning = true;
   isPaused = false;
-
   btnStart.textContent = '⏸ Pause';
   btnStop.disabled = false;
   statusDot.classList.add('active');
-
   const delay = parseInt(sliderTimer.value);
   statusText.textContent = delay > 0 ? 'Démarrage dans ' + delay + 's…' : 'Défilement…';
-
   runTimer(delay, () => {
     statusText.textContent = 'Défilement en cours';
+    startLiveTimer();
     animFrame = requestAnimationFrame(scroll);
   });
 }
@@ -818,11 +649,10 @@ function pausePrompter() {
 function stopPrompter(ended = false) {
   cancelAnimationFrame(animFrame);
   clearInterval(timerInterval);
+  stopLiveTimer();
   timerOverlay.classList.add('hidden');
-  isRunning = false;
-  isPaused = false;
-  scrollPos = 0;
-  lastTime = null;
+  isRunning = false; isPaused = false;
+  scrollPos = 0; lastTime = null;
   textTrack.style.transform = '';
   progressFill.style.width = '0%';
   btnStart.textContent = '▶ Lancer';
@@ -831,87 +661,48 @@ function stopPrompter(ended = false) {
   statusText.textContent = ended ? 'Terminé ✓' : 'En attente';
 }
 
-btnStart.addEventListener('click', () => {
-  if (!isRunning) startPrompter();
-  else pausePrompter();
-});
-
+btnStart.addEventListener('click', () => { if (!isRunning) startPrompter(); else pausePrompter(); });
 btnStop.addEventListener('click', () => stopPrompter(false));
 
-function enterFullscreen() {
+// Fullscreen
+function enterFS() {
   const el = document.documentElement;
   if (el.requestFullscreen) el.requestFullscreen();
   else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-  btnFullscreen.textContent = '✕ Quitter';
 }
-function exitFullscreen() {
+function exitFS() {
   if (document.exitFullscreen) document.exitFullscreen();
   else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-  btnFullscreen.textContent = '⛶ Plein écran';
 }
 btnFullscreen.addEventListener('click', () => {
-  if (!document.fullscreenElement && !document.webkitFullscreenElement) enterFullscreen();
-  else exitFullscreen();
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) enterFS();
+  else exitFS();
 });
 document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement) btnFullscreen.textContent = '⛶ Plein écran';
+  btnFullscreen.textContent = document.fullscreenElement ? '✕ Quitter' : '⛶ Plein écran';
 });
 
-// HUD fullscreen controls
-const fsSpeedVal = document.getElementById('fs-speed-val');
-function updateFsSpeed() { fsSpeedVal.textContent = currentSpeed + ' px/s'; }
-document.getElementById('fs-slower').addEventListener('click', () => {
-  currentSpeed = Math.max(10, currentSpeed - 15);
-  sliderSpeed.value = currentSpeed;
-  document.getElementById('val-speed').textContent = currentSpeed;
-  updateFsSpeed();
-});
-document.getElementById('fs-faster').addEventListener('click', () => {
-  currentSpeed = Math.min(400, currentSpeed + 15);
-  sliderSpeed.value = currentSpeed;
-  document.getElementById('val-speed').textContent = currentSpeed;
-  updateFsSpeed();
-});
-document.getElementById('fs-pause-btn').addEventListener('click', () => {
-  if (!isRunning) startPrompter();
-  else pausePrompter();
-  document.getElementById('fs-pause-btn').textContent = isPaused ? '▶ Reprendre' : '⏸ Pause';
-});
-document.getElementById('fs-exit').addEventListener('click', exitFullscreen);
+// HUD
+document.getElementById('fs-slower').addEventListener('click', () => setSpeed(Math.max(10, currentSpeed - 15)));
+document.getElementById('fs-faster').addEventListener('click', () => setSpeed(Math.min(400, currentSpeed + 15)));
+document.getElementById('fs-pause-btn').addEventListener('click', () => { if (!isRunning) startPrompter(); else pausePrompter(); });
+document.getElementById('fs-exit').addEventListener('click', exitFS);
 
-// Keyboard shortcuts
+// Keyboard
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
   switch(e.key) {
-    case ' ':
-      e.preventDefault();
-      if (!isRunning) startPrompter();
-      else pausePrompter();
-      break;
-    case 'ArrowUp':
-      e.preventDefault();
-      sliderSpeed.value = Math.min(400, parseInt(sliderSpeed.value) + 10);
-      currentSpeed = parseInt(sliderSpeed.value);
-      document.getElementById('val-speed').textContent = sliderSpeed.value;
-      break;
-    case 'ArrowDown':
-      e.preventDefault();
-      sliderSpeed.value = Math.max(10, parseInt(sliderSpeed.value) - 10);
-      currentSpeed = parseInt(sliderSpeed.value);
-      document.getElementById('val-speed').textContent = sliderSpeed.value;
-      break;
-    case 'r': case 'R':
-      stopPrompter(false);
-      break;
-    case 'f': case 'F':
-      btnFullscreen.click();
-      break;
+    case ' ': e.preventDefault(); if (!isRunning) startPrompter(); else pausePrompter(); break;
+    case 'ArrowUp': e.preventDefault(); setSpeed(Math.min(400, currentSpeed + 10)); break;
+    case 'ArrowDown': e.preventDefault(); setSpeed(Math.max(10, currentSpeed - 10)); break;
+    case 'r': case 'R': stopPrompter(false); break;
+    case 'f': case 'F': btnFullscreen.click(); break;
   }
 });
 
 // Init
 updateDisplay();
-selectFont.value = "'Crimson Pro', serif";
+selectFont.value = "'Crimson Pro',serif";
 </script>
 </body>
 </html>
